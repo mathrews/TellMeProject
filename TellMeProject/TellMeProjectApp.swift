@@ -11,7 +11,7 @@ import SwiftUI
 struct TellMeProjectApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            GalleryView()
         }
     }
 }
