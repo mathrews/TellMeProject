@@ -1,0 +1,15 @@
+{
+  "originHash" : "111bb9ac217120e494f2746602b569e8404f472c7a23db2213bcce04c1268cd1",
+  "pins" : [
+    {
+      "identity" : "swiftuiextras",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mateusrodriguesxyz/SwiftUIExtras.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c06e50a07d9b85e3235c1537585c36ae81320f79"
+      }
+    }
+  ],
+  "version" : 3
+}
