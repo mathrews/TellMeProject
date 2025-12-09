@@ -19,6 +19,7 @@ struct PostFeed: View {
                 Text("@John Doe")
                     .font(.caption)
                     .foregroundColor(.gray)
+                    .fontWeight(.bold)
                 Spacer()
             }
                 .padding(.bottom, 4)
@@ -38,6 +39,8 @@ struct PostFeed: View {
                 Spacer()
                 Image(systemName: "info.circle")
                     .foregroundStyle(Color.gray)
+                    .fontWeight(.bold)
+                    .font(.title3)
             }
             .padding(.bottom, 4)
             Divider()
@@ -49,18 +52,22 @@ struct PostFeed: View {
                         .foregroundStyle(Color.gray)
                     Text("0")
                         .foregroundStyle(Color.gray)
+                        .fontWeight(.bold)
                 }
                 HStack {
                     Image(systemName: "message")
                         .foregroundStyle(Color.gray)
                     Text("Reply")
                         .foregroundStyle(Color.gray)
+                        .fontWeight(.bold)
                 }
+                .padding(.horizontal)
                 HStack {
                     Image(systemName: "link")
                         .foregroundStyle(Color.gray)
                     Text("Copy Link")
                         .foregroundStyle(Color.gray)
+                        .fontWeight(.bold)
                 }
                 Spacer()
             }
