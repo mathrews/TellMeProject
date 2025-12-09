@@ -8,67 +8,99 @@
 import SwiftUI
 
 struct PostFeed: View {
+    var profileImage: String
+    var profileName: String
+    var postImage: String
+    var hour: Date
+    var date: Date
+    
     @State var isLiked = false
+    @State var likeCount = 0
     
     var body: some View {
         VStack {
             HStack {
-                Circle()
-                    .frame(width: 32, height: 32)
-                    .foregroundStyle(Color.white)
-                Text("@John Doe")
+                Image(profileImage)
+                    .resizable()
+                    .scaledToFit() // Or .scaledToFit()
+                    .frame(width: 32, height: 32) // Set desired frame size
+                    .clipShape(Circle())
+                Text(profileName)
                     .font(.caption)
                     .foregroundColor(.gray)
                     .fontWeight(.bold)
                 Spacer()
             }
                 .padding(.bottom, 4)
-            RoundedRectangle(cornerRadius: 10)
-                .frame(maxWidth: .infinity, maxHeight: 500)
-                .foregroundStyle(Color.white)
-                .padding(.bottom, 4)
+            Image(postImage)
+                .resizable()
+                .scaledToFit() // Or .scaledToFit()
+                .frame(maxWidth: .infinity, minHeight: 400) // Set desired frame size
+                .clipShape(RoundedRectangle(cornerRadius: 20))
             HStack {
                 HStack {
-                    Text("Hour")
+                    Text(hour.formatted(date: .abbreviated, time: .omitted))
                         .foregroundStyle(Color.gray)
                     Text("-")
                         .foregroundStyle(Color.gray)
-                    Text("Date")
+                    Text(date.formatted(date: .omitted, time: .shortened))
                         .foregroundStyle(Color.gray)
                 }
                 Spacer()
-                Image(systemName: "info.circle")
-                    .foregroundStyle(Color.gray)
-                    .fontWeight(.bold)
-                    .font(.title3)
+                Button(action: {
+                    print("Show Infos")
+                }) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(Color.gray)
+                        .fontWeight(.bold)
+                        .font(.title3)
+                }
             }
-            .padding(.bottom, 4)
+            .padding(.bottom, 2)
             Divider()
                 .overlay(Rectangle().frame(height: 1).foregroundColor(.white))
                 .padding(.bottom, 4)
             HStack {
                 HStack {
-                    Image(systemName: "heart")
-                        .foregroundStyle(Color.gray)
-                    Text("0")
+                    Button(action: {
+                        if !isLiked {
+                            likeCount += 1
+                        } else if isLiked {
+                            likeCount -= 1
+                        }
+                        isLiked.toggle()
+                    }) {
+                        Image(systemName: isLiked ? "heart.fill" : "heart")
+                            .foregroundStyle(isLiked ? Color(hex: "FA1980") : Color.gray)
+                    }
+                    Text("\(likeCount)")
                         .foregroundStyle(Color.gray)
                         .fontWeight(.bold)
                 }
                 HStack {
-                    Image(systemName: "message")
-                        .foregroundStyle(Color.gray)
+                    Button(action: {
+                        print("Subir Sheet")
+                    }) {
+                        Image(systemName: "message")
+                            .foregroundStyle(Color.gray)
+                    }
                     Text("Reply")
                         .foregroundStyle(Color.gray)
                         .fontWeight(.bold)
                 }
                 .padding(.horizontal)
-                HStack {
-                    Image(systemName: "link")
-                        .foregroundStyle(Color.gray)
-                    Text("Copy Link")
-                        .foregroundStyle(Color.gray)
-                        .fontWeight(.bold)
+                Button(action: {
+                    print("Copy Link")
+                }) {
+                    HStack {
+                        Image(systemName: "link")
+                            .foregroundStyle(Color.gray)
+                        Text("Copy Link")
+                            .foregroundStyle(Color.gray)
+                            .fontWeight(.bold)
+                    }
                 }
+                
                 Spacer()
             }
         }
@@ -78,5 +110,5 @@ struct PostFeed: View {
 }
 
 #Preview {
-    PostFeed()
+    PostFeed(profileImage: "Radioheadthebends", profileName: "@TomYorke", postImage: "TomYorke", hour: Date.now, date: Date.now)
 }
