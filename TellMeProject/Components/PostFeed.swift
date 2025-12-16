@@ -61,7 +61,7 @@ struct PostFeed: View {
                 }
                 .sheet(isPresented: $showSheetInfos) {
                     InfosSheetView()
-                        .presentationBackground(.black)
+                        .presentationBackground(Color(hex: "212328"))
                 }
             }
             .padding(.bottom, 2)
@@ -97,7 +97,7 @@ struct PostFeed: View {
                     .sheet(isPresented: $showSheetComments) {
                         ScrollView {
                             CommentSheetView()
-                                .presentationBackground(.black)
+                                .presentationBackground(Color(hex: "212328"))
                         }
                         // Optional: Customize sheet behavior
                         .presentationDetents([.height(700), .large])
