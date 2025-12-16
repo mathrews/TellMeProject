@@ -9,11 +9,11 @@ import SwiftUI
 import SwiftUIExtras
 
 struct PostFeed: View {
-    var profileImage: String
-    var profileName: String
-    var postImage: String
-    var hour: Date
-    var date: Date
+    var profileImage: String = "Radioheadthebends"
+    var profileName: String = "@TomYorke"
+    var postImage: String = "TomYorke"
+    var hour: Date = Date.now
+    var date: Date = Date.now
 
     @State var isLiked = false
     @State var likeCount = 0
