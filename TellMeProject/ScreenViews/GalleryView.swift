@@ -32,54 +32,31 @@ struct GalleryView: View {
         NavigationStack {
             ScrollViewReader { proxy in
                 ZStack(alignment: .bottomTrailing) {
-                    ScrollView {
-                        Color.clear.frame(height: 0).id(topID)
+                    VStack {
+                        CustomHeader()
+                        ScrollView {
+                            Color.clear.frame(height: 0).id(topID)
 
-                        HStack {
-                            Spacer()
-                            
-                            Text("Galery")
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                            
-                            Spacer()
-                            
-                            NavigationLink(destination: UploadView()) {
-                                Image(systemName: "plus")
-                                    .padding(6)  // Add padding around the content
-                                    .background(Color.black)  // Background color of the button
-                                    .foregroundColor(.white)  // Text and icon color
-                                    .fontWeight(.bold)
-                                    .cornerRadius(100)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 100)  // The border shape
-                                            .stroke(Color.white, lineWidth: 2)  // Border color and thickness
-                                    )
+                            VStack(spacing: 0) {
+                                LazyVStack {
+                                    ForEach(0...50) { _ in
+                                        PostFeed()
+                                    }
+                                }
                             }
-                            .navigationTitle("Upload")
-                            // Add buttons or other UI elements here
+                            .scrollTargetLayout()
                         }
-                        .padding()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color(hex: "212328").ignoresSafeArea())
-
-                        VStack {
-                            ForEach(0...50) { _ in
-                                PostFeed()
+                        // Bind the scroll position to the state variable
+                        .scrollPosition(id: $firstItemID)
+                        // Observe changes to the first visible item ID
+                        .onChange(of: firstItemID) { oldValue, newValue in
+                            // If the first visible item's ID is not 0 (the top item), show the indicator
+                            withAnimation(.easeInOut) {
+                                showButtonTop = (newValue != 0)
                             }
                         }
-                        .scrollTargetLayout()
-                    }
-                    // Bind the scroll position to the state variable
-                    .scrollPosition(id: $firstItemID)
-                    // Observe changes to the first visible item ID
-                    .onChange(of: firstItemID) { oldValue, newValue in
-                        // If the first visible item's ID is not 0 (the top item), show the indicator
-                        withAnimation(.easeInOut) {
-                            showButtonTop = (newValue != 0)
-                        }
-                    }
 
+                    }
                     if showButtonTop {
                         Button(action: {
                             withAnimation(.easeInOut) {  // Adds smooth scrolling animation
@@ -91,16 +68,47 @@ struct GalleryView: View {
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(.green)
                                 .shadow(radius: 5)
-                        }
-                        .padding(.trailing, 20)
-                        .padding(.bottom, 40)  // Adjust position to avoid iOS Home Indicator
+                                .padding(.trailing)
+                        }  // Adjust position to avoid iOS Home Indicator
                     }
-
                 }
             }
             .toolbar(.hidden, for: .navigationBar)  // Hide the default system navigation bar
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black.ignoresSafeArea())
+        }
+    }
+}
+
+struct CustomHeader: View {
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Tell Me")
+                    .fontDesign(.serif)
+                    .fontWeight(.bold)
+                    .font(.title)
+
+                Spacer()
+                NavigationLink(destination: UploadView()) {
+                    Image(systemName: "plus")
+                        .padding(6)  // Add padding around the content
+                        .background(Color(hex: "212328"))  // Background color of the button
+                        .foregroundColor(.white)  // Text and icon color
+                        .fontWeight(.bold)
+                        .cornerRadius(100)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 100)  // The border shape
+                                .stroke(Color.white, lineWidth: 2)  // Border color and thickness
+                        )
+                }
+                .navigationTitle("Upload")
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+            .frame(maxWidth: .infinity)
+            .foregroundColor(.white)
+            .background(Color(hex: "212328"))
         }
     }
 }
