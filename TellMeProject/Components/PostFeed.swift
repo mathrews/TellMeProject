@@ -24,6 +24,9 @@ struct PostFeed: View {
     var hour: Date = Date.now
     var date: Date = Date.now
 
+    
+    // Array que guarda os comentários
+    @State var comments: [Comment] = []
     @State var isLiked = false
     @State var likeCount = 0
     @State var showSheetComments = false
@@ -104,12 +107,10 @@ struct PostFeed: View {
                             .foregroundStyle(Color.gray)
                     }
                     .sheet(isPresented: $showSheetComments) {
-                        ScrollView {
-                            CommentSheetView()
-                                .presentationBackground(Color(hex: "212328"))
-                        }
-                        // Optional: Customize sheet behavior
-                        .presentationDetents([.height(700), .large])
+                        CommentSheetView(comments: $comments)
+                            .presentationBackground(Color(hex: "212328"))
+                            .presentationDetents([.height(700), .large]) // Optional: Customize sheet behavior
+                            
                     }
 
                     Text("Reply")
@@ -140,8 +141,7 @@ struct PostFeed: View {
 // Sheet que mostra os comentários e permite adicionar novos
 struct CommentSheetView: View {
     
-    // Array que guarda os comentários
-    @State var comments: [Comment] = []
+    @Binding var comments: [Comment] 
     
     // Texto que o usuário digita
     @State var newCommentText: String = ""
@@ -180,6 +180,9 @@ struct CommentSheetView: View {
                     .foregroundColor(.white)
                     .font(.body)
                     .textFieldStyle(.plain)
+                    .onSubmit {
+                        postComment()
+                    }
 
                 // Botão "Post"
                 if !newCommentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
