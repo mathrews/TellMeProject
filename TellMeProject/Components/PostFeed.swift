@@ -8,6 +8,15 @@
 import SwiftUI
 import SwiftUIExtras
 
+// Este struct guarda os dados reais (texto, curtida, contagem).
+// Ele é Identifiable para funcionar com ForEach sem precisar de índices.
+struct Comment: Identifiable {
+    let id = UUID()
+    var text: String
+    var isLiked: Bool
+    var likeCount: Int
+}
+
 struct PostFeed: View {
     var profileImage: String = "Radioheadthebends"
     var profileName: String = "@TomYorke"
@@ -15,6 +24,9 @@ struct PostFeed: View {
     var hour: Date = Date.now
     var date: Date = Date.now
 
+    
+    // Array que guarda os comentários
+    @State var comments: [Comment] = []
     @State var isLiked = false
     @State var likeCount = 0
     @State var showSheetComments = false
@@ -95,12 +107,10 @@ struct PostFeed: View {
                             .foregroundStyle(Color.gray)
                     }
                     .sheet(isPresented: $showSheetComments) {
-                        ScrollView {
-                            CommentSheetView()
-                                .presentationBackground(Color(hex: "212328"))
-                        }
-                        // Optional: Customize sheet behavior
-                        .presentationDetents([.height(700), .large])
+                        CommentSheetView(comments: $comments)
+                            .presentationBackground(Color(hex: "212328"))
+                            .presentationDetents([.height(700), .large]) // Optional: Customize sheet behavior
+                            
                     }
 
                     Text("Reply")
@@ -128,21 +138,140 @@ struct PostFeed: View {
     }
 }
 
+// Sheet que mostra os comentários e permite adicionar novos
 struct CommentSheetView: View {
+    
+    @Binding var comments: [Comment] 
+    
+    // Texto que o usuário digita
+    @State var newCommentText: String = ""
+    
     var body: some View {
         VStack {
-            Text("Comments")
+            // Título da Sheet
+            Text("Comentários")
                 .foregroundStyle(.white)
                 .fontWeight(.bold)
                 .padding(.top, 20)
-            ForEach (0...50) { _ in
-                CommentView()
+                .padding(.bottom, 12)
+            
+            // Lista com scroll dos cometários existentes
+            ScrollView {
+                        LazyVStack(spacing: 12) {
+                            // Para cada comentário nos dados, cria uma CommentView
+                            ForEach(comments) { comment in
+                                CommentView(comment: comment) {
+                                    // Quando o usuário clica no coração, avisa esta view para atualizar os dados
+                                    likeComment(withId: comment.id)
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+            }
+            
+            // Barra de inserção de novo comentário
+            HStack(spacing: 8) {
+                // Campo de texto clean
+                TextField("Adicione um comentário...", text: $newCommentText, axis: .vertical)
+                    .lineLimit(1...3)
+                    .padding(10)
+                    .background(Color.black.opacity(0.3))
+                    .cornerRadius(16)
+                    .foregroundColor(.white)
+                    .font(.body)
+                    .textFieldStyle(.plain)
+                    .onSubmit {
+                        postComment()
+                    }
+
+                // Botão "Post"
+                if !newCommentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Button("Post") {
+                        postComment()
+                    }
+                    .fontWeight(.semibold)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
+                }
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                Color(hex: "212328") // Mesma cor do fundo da sheet → funde perfeitamente
+                    .ignoresSafeArea(.container, edges: .bottom)
+            )
+        }
+    }
+    
+    // Função chamada quando o usuário clica no coração de um comentário
+    func likeComment(withId id: UUID) {
+        // Procura o comentário no array pelo ID
+        guard let index = comments.firstIndex(where: { $0.id == id }) else { return }
+        
+        // Atualiza o estado real do comentário
+        comments[index].isLiked.toggle()
+        if comments[index].isLiked {
+            comments[index].likeCount += 1
+        } else {
+            comments[index].likeCount = max(0, comments[index].likeCount - 1)
+        }
+        // O SwiftUI detecta a mudança e atualiza automaticamente a CommentView
+    }
+
+    // Função chamada ao pressionar "Post"
+    func postComment() {
+        let trimmed = newCommentText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        // Cria um novo comentário com dados reais
+        let newComment = Comment(text: trimmed, isLiked: false, likeCount: 0)
+        comments.insert(newComment, at: 0) // Insere no topo
+        newCommentText = "" // Limpa o campo
+    }
+    
+}
+
+// Exibe dados e notifica quando há interação.
+struct CommentView: View{
+    
+    let comment: Comment
+    
+    // Função a ser chamada quando o usuário curtir
+    let onLike: () -> Void
+    
+    var body: some View {
+        HStack {
+            Image("TomYorke")
+                .resizable()
+                .scaledToFit()  // Or .scaledToFit()
+                .frame(width: 40, height: 40)  // Set desired frame size
+                .clipShape(Circle())
+            
+            VStack (alignment: .leading) {
+                HStack {
+                    Text("profile")
+                        .font(.caption)
+                        .foregroundColor(.white)
+                        .fontWeight(.bold)
+                }
+                
+                Text(comment.text)
+                    .foregroundColor(.white)
+                    .font(.caption)
             }
             Spacer()
+            
+            // Botão de curtida: chama onLike() quando pressionado
+            Button(action: onLike) {
+                Image(systemName: comment.isLiked ? "heart.fill" : "heart")
+                    .foregroundStyle(comment.isLiked ? Color(hex: "FA1980") : .gray)
+            }
         }
+        .padding()
     }
 }
 
+// Sheet de informações (simples, só exemplo)
 struct InfosSheetView: View {
     var body: some View {
         VStack {
@@ -153,48 +282,11 @@ struct InfosSheetView: View {
     }
 }
 
-struct CommentView: View{
-    @State var isLiked = false
-    @State var likeCount = 0
-    
-    var body: some View {
-        HStack {
-            Image("TomYorke")
-                .resizable()
-                .scaledToFit()  // Or .scaledToFit()
-                .frame(width: 40, height: 40)  // Set desired frame size
-                .clipShape(Circle())
-            VStack (alignment: .leading) {
-                HStack {
-                    Text("profile")
-                        .font(.caption)
-                        .foregroundColor(.white)
-                        .fontWeight(.bold)
-                }
-                Text("Comentario")
-                    .foregroundColor(.white)
-                    .font(.caption)
-            }
-            Spacer()
-            Button(action: {
-                if !isLiked {
-                    likeCount += 1
-                } else if isLiked {
-                    likeCount -= 1
-                }
-                isLiked.toggle()
-            }) {
-                Image(systemName: isLiked ? "heart.fill" : "heart")
-                    .foregroundStyle(
-                        isLiked ? Color(hex: "FA1980") : Color.gray)
-            }
-        }
-        .padding()
-    }
-}
-
 #Preview {
     PostFeed(
-        profileImage: "Radioheadthebends", profileName: "@TomYorke",
-        postImage: "TomYorke", hour: Date.now, date: Date.now)
+        profileImage: "Radioheadthebends",
+        profileName: "@TomYorke",
+        postImage: "TomYorke",
+        hour: Date.now,
+        date: Date.now)
 }
