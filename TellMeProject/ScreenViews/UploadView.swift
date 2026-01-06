@@ -41,14 +41,11 @@ struct UploadView: View {
                 .border(Color.black, width: 0.5)
                 .background(Color(UIColor.secondarySystemBackground))
 
-            HStack {
-                Text("Ano")
-                Picker("", selection: $ano) {
-                    ForEach(2000...2025, id: \.self) {
-                        Text(String($0))
-                    }
-                }
-            }
+            TextField("Ano", value: $ano)
+                .textFieldStyle(.plain)
+                .padding(10)
+                .border(Color.black, width: 0.5)
+                .background(Color(UIColor.secondarySystemBackground))
         }
         .padding()
     }
