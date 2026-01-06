@@ -17,35 +17,19 @@ struct UploadView: View {
     @State private var titulo: String = ""
     @State private var desc: String = ""
     @State private var autor: String = ""
-    @State private var ano = Date()
+    @State private var ano: Int = 0
     @State private var tags: [String] = []
     @State private var categ: Category? = nil
 
     var body: some View {
         VStack {
-            TextField("Título", text: $titulo)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .border(Color.black, width: 0.5)
-                .background(Color(UIColor.secondarySystemBackground))
+            TextFieldStack(label: "Título", text: $titulo)
 
-            TextField("Descrição", text: $desc, axis: Axis.vertical)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .border(Color.black, width: 0.5)
-                .background(Color(UIColor.secondarySystemBackground))
+            TextFieldStack(label: "Descrição", text: $desc)
 
-            TextField("Autor", text: $autor)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .border(Color.black, width: 0.5)
-                .background(Color(UIColor.secondarySystemBackground))
+            TextFieldStack(label: "Autor", text: $autor)
 
-            TextField("Ano", value: $ano)
-                .textFieldStyle(.plain)
-                .padding(10)
-                .border(Color.black, width: 0.5)
-                .background(Color(UIColor.secondarySystemBackground))
+            TextFieldStack(label: "Ano", value: $ano)
         }
         .padding()
     }
