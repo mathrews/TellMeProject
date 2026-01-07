@@ -141,7 +141,7 @@ struct PostFeed: View {
 // Sheet que mostra os comentários e permite adicionar novos
 struct CommentSheetView: View {
     
-    @Binding var comments: [Comment] 
+    @Binding var comments: [Comment]
     
     // Texto que o usuário digita
     @State var newCommentText: String = ""
@@ -172,17 +172,24 @@ struct CommentSheetView: View {
             // Barra de inserção de novo comentário
             HStack(spacing: 8) {
                 // Campo de texto clean
-                TextField("Adicione um comentário...", text: $newCommentText, axis: .vertical)
-                    .lineLimit(1...3)
-                    .padding(10)
-                    .background(Color.black.opacity(0.3))
-                    .cornerRadius(16)
-                    .foregroundColor(.white)
-                    .font(.body)
-                    .textFieldStyle(.plain)
-                    .onSubmit {
-                        postComment()
-                    }
+                TextField(
+                    "Comentário",
+                    text: $newCommentText,
+                    prompt: Text("Adicione um comentário...")
+                        .foregroundColor(.white.opacity(0.2)), // Altere aqui para a cor desejada
+                    axis: .vertical
+                )
+                .lineLimit(1...3)
+                .padding(10)
+                .background(Color.black.opacity(0.3))
+                .cornerRadius(16)
+                .foregroundColor(.white) // Cor do texto que o usuário digita
+                .font(.body)
+                .textFieldStyle(.plain)
+                .onSubmit {
+                    postComment()
+                }
+
 
                 // Botão "Post"
                 if !newCommentText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
