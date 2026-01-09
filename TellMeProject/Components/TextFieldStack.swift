@@ -14,14 +14,19 @@ struct TextFieldStack: View {
 
     var body: some View {
         if let text = text {
-            HStack{
-                Text(label)
-                TextField("", text: text)
-                    .textFieldStyle(.plain)
-                    .padding(10)
-                    .border(Color.black, width: 0.5)
-                    .background(Color(UIColor.secondarySystemBackground))
+            ZStack {
+                Rectangle().fill(Color(UIColor.white))
+
+                HStack {
+                    Text(label)
+                    TextField("", text: text)
+                        .textFieldStyle(.plain)
+                        .padding(10)
+                        .border(Color.black, width: 0.5)
+                        .background(Color(UIColor.secondarySystemBackground))
+                }
             }
+
         } else if let value = value {
             HStack{
                 Text(label)
@@ -33,4 +38,7 @@ struct TextFieldStack: View {
             }
         }
     }
+}
+#Preview {
+    UploadView()
 }
